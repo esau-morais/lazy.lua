@@ -1,0 +1,11 @@
+{
+  "cn": {
+    "prefix": "cn",
+    "body": [
+      "export const cn = (...classNames: (false | null | undefined | string)[]) => {",
+      "  return classNames.filter(Boolean).join(' ')",
+      "}"
+    ],
+    "description": "A utility function for handling multiple class names"
+  }
+}
