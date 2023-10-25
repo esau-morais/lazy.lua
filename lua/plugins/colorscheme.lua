@@ -9,7 +9,6 @@ return {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = "catppuccin",
-      version = "10.7.1",
     },
   },
 }
