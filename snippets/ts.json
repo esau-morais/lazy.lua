@@ -1,4 +1,9 @@
 {
+  "children": {
+    "prefix": "ch",
+    "body": ["{ children }: { children: ReactNode }"],
+    "description": "React children default typing"
+  },
   "cn": {
     "prefix": "cn",
     "body": [

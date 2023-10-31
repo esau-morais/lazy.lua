@@ -2,8 +2,11 @@
   "contributes": {
     "snippets": [
       {
-        "language": ["typescript", "typescriptreact"],
-        "path": "./snippets/cn.json"
+        "language": [
+          "typescript",
+          "typescriptreact"
+        ],
+        "path": "./snippets/ts.json"
       }
     ]
   }
