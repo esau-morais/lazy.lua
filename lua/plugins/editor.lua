@@ -44,19 +44,23 @@ return {
         event = "VeryLazy",
         config = function()
           require("lazyvim.util").on_load("telescope.nvim", function()
-            local tl = require("telescope")
-            tl.load_extension("git_worktree")
-            tl.load_extension("harpoon")
+            require("telescope").load_extension("git_worktree")
+            require("telescope").load_extension("harpoon")
           end)
         end,
         keys = {
           {
-            "<leader>sr",
+            "<leader>m",
+            "<CMD>Telescope harpoon marks<CR>",
+            desc = "List harpoon marks",
+          },
+          {
+            "<leader>lw",
             "<CMD>lua require('telescope').extensions.git_worktree.git_worktrees()<CR>",
             desc = "List worktrees",
           },
           {
-            "<leader>sR",
+            "<leader>cw",
             "<CMD>lua require('telescope').extensions.git_worktree.create_git_worktree()<CR>",
             desc = "Create worktree",
           },
@@ -65,5 +69,26 @@ return {
     },
   },
   { "tpope/vim-fugitive" },
-  { "ThePrimeagen/harpoon" },
+  {
+    "ThePrimeagen/harpoon",
+    opts = function()
+      local mark = require("harpoon.mark")
+      local ui = require("harpoon.ui")
+      local map = vim.keymap
+
+      map.set("n", "<leader>a", mark.add_file)
+      map.set("n", "<leader>1", function()
+        ui.nav_file(1)
+      end)
+      map.set("n", "<leader>2", function()
+        ui.nav_file(2)
+      end)
+      map.set("n", "<leader>3", function()
+        ui.nav_file(3)
+      end)
+      map.set("n", "<leader>4", function()
+        ui.nav_file(4)
+      end)
+    end,
+  },
 }
