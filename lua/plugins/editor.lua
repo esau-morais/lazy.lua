@@ -44,7 +44,9 @@ return {
         event = "VeryLazy",
         config = function()
           require("lazyvim.util").on_load("telescope.nvim", function()
-            require("telescope").load_extension("git_worktree")
+            local tl = require("telescope")
+            tl.load_extension("git_worktree")
+            tl.load_extension("harpoon")
           end)
         end,
         keys = {
@@ -63,4 +65,5 @@ return {
     },
   },
   { "tpope/vim-fugitive" },
+  { "ThePrimeagen/harpoon" },
 }
