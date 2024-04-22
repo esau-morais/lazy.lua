@@ -71,24 +71,35 @@ return {
   { "tpope/vim-fugitive" },
   {
     "ThePrimeagen/harpoon",
-    opts = function()
-      local mark = require("harpoon.mark")
-      local ui = require("harpoon.ui")
-      local map = vim.keymap
+    keys = function()
+      local keys = {
+        {
+          "<leader>a",
+          function()
+            require("harpoon"):list():add()
+          end,
+          desc = "Harpoon File",
+        },
+        {
+          "<leader>h",
+          function()
+            local harpoon = require("harpoon")
+            harpoon.ui:toggle_quick_menu(harpoon:list())
+          end,
+          desc = "Harpoon Quick Menu",
+        },
+      }
 
-      map.set("n", "<leader>a", mark.add_file)
-      map.set("n", "<leader>1", function()
-        ui.nav_file(1)
-      end)
-      map.set("n", "<leader>2", function()
-        ui.nav_file(2)
-      end)
-      map.set("n", "<leader>3", function()
-        ui.nav_file(3)
-      end)
-      map.set("n", "<leader>4", function()
-        ui.nav_file(4)
-      end)
+      for i = 1, 5 do
+        table.insert(keys, {
+          "<leader>" .. i,
+          function()
+            require("harpoon"):list():select(i)
+          end,
+          desc = "Harpoon to File " .. i,
+        })
+      end
+      return keys
     end,
   },
   {
