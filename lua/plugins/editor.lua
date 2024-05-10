@@ -1,5 +1,40 @@
 return {
   {
+    "stevearc/oil.nvim",
+    opts = {
+      view_options = {
+        show_hidden = true,
+        is_hidden_file = function(name)
+          return vim.startswith(name, ".")
+        end,
+        is_always_hidden = function(name)
+          local never_show = { ".git", "node_modules" }
+
+          for _, val in ipairs(never_show) do
+            if name == val then
+              return true
+            end
+
+            return false
+          end
+        end,
+      },
+    },
+    keys = {
+      {
+        "<leader>o",
+        function()
+          if vim.bo.filetype == "oil" then
+            require("oil").close()
+          else
+            require("oil").open()
+          end
+        end,
+      },
+    },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+  },
+  {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
       filesystem = {
