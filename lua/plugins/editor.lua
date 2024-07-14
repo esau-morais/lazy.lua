@@ -102,10 +102,18 @@ return {
         },
       },
     },
+    opts = {
+      defaults = {
+        file_ignore_patterns = {
+          "./packages/hub-template/*",
+        },
+      },
+    },
   },
   { "tpope/vim-fugitive" },
   {
     "ThePrimeagen/harpoon",
+    branch = "harpoon2",
     keys = function()
       local keys = {
         {
@@ -140,7 +148,39 @@ return {
   {
     "brenoprata10/nvim-highlight-colors",
     config = function()
-      require("nvim-highlight-colors").setup()
+      require("nvim-highlight-colors").setup({})
     end,
+  },
+  {
+    "mbbill/undotree",
+    config = function()
+      vim.g.undotree_WindowLayout = 4
+      vim.g.undotree_SetFocusWhenToggle = 1
+    end,
+    keys = {
+      {
+        "<leader>ut",
+        "<cmd>UndotreeToggle<CR>",
+        desc = "Toggle Undotree",
+      },
+    },
+  },
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        ["html"] = { "prettier" },
+      },
+    },
+  },
+  {
+    "mistricky/codesnap.nvim",
+    build = "make",
+    opts = {
+      border = "rounded",
+      has_breadcrumbs = true,
+      bg_theme = "summer",
+      watermark = "",
+    },
   },
 }
