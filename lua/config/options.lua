@@ -7,9 +7,6 @@ vim.o.hlsearch = true
 vim.wo.number = true
 vim.o.relativenumber = true
 
--- Disable mouse mode
-vim.o.mouse = ""
-
 -- Enable break indent
 vim.o.breakindent = true
 
@@ -29,9 +26,6 @@ vim.opt.clipboard = "unnamedplus"
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
-
--- Concealer for Neorg
-vim.o.conceallevel = 2
 
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
