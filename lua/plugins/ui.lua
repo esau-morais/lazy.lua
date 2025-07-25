@@ -15,9 +15,6 @@ return {
       options = {
         component_separators = "",
         section_separators = "",
-        sections = {
-          lualine_z = {},
-        },
       },
     },
   },
@@ -85,6 +82,12 @@ return {
     "rcarriga/nvim-notify",
     opts = {
       enabled = false,
+    },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    opts = {
+      max_lines = 1,
     },
   },
 }

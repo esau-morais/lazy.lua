@@ -33,3 +33,12 @@ vim.o.completeopt = "menuone,noselect"
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+
+-- INFO: see https://github.com/epwalsh/obsidian.nvim/issues/286
+vim.opt.conceallevel = 2
+
+-- auto format on save
+vim.g.lazyvim_eslint_auto_format = true
