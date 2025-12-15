@@ -40,5 +40,5 @@ vim.opt.laststatus = 3
 -- INFO: see https://github.com/epwalsh/obsidian.nvim/issues/286
 vim.opt.conceallevel = 2
 
--- auto format on save
-vim.g.lazyvim_eslint_auto_format = true
+-- Enable this option to avoid conflicts with Prettier.
+vim.g.lazyvim_prettier_needs_config = true

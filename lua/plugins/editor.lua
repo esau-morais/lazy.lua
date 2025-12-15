@@ -1,39 +1,75 @@
+local find_config = function(bufnr, config_files)
+  return vim.fs.find(config_files, {
+    upward = true,
+    stop = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)),
+    path = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)),
+  })[1]
+end
+
+local biome_or_prettier = function(bufnr)
+  local has_biome_config = find_config(bufnr, { "biome.json", "biome.jsonc" })
+
+  if has_biome_config then
+    return { "biome", stop_after_first = true }
+  end
+
+  local has_prettier_config = find_config(bufnr, {
+    ".prettierrc",
+    ".prettierrc.json",
+    ".prettierrc.yml",
+    ".prettierrc.yaml",
+    ".prettierrc.json5",
+    ".prettierrc.js",
+    ".prettierrc.cjs",
+    ".prettierrc.toml",
+    "prettier.config.js",
+    "prettier.config.cjs",
+  })
+
+  if has_prettier_config then
+    return { "prettier", stop_after_first = true }
+  end
+
+  -- Default to Prettier if no config is found
+  return { "prettier", stop_after_first = true }
+end
+
+local format_file = function(bufnr)
+  local file = vim.api.nvim_buf_get_name(bufnr)
+  local formatter = biome_or_prettier(bufnr)
+
+  if formatter[1] == "biome" then
+    -- Run Biome
+    local result = vim.fn.system("biome check --write " .. vim.fn.shellescape(file))
+    if vim.v.shell_error == 0 then
+      vim.cmd("edit!")
+    else
+      vim.api.nvim_err_writeln("Biome error: " .. result)
+    end
+  end
+  -- Add Prettier logic here if needed
+end
+
+local filetypes_with_dynamic_formatter = {
+  "javascript",
+  "javascriptreact",
+  "typescript",
+  "typescriptreact",
+  "vue",
+  "css",
+  "scss",
+  "less",
+  "html",
+  "json",
+  "jsonc",
+  "yaml",
+  "markdown",
+  "markdown.mdx",
+  "graphql",
+  "handlebars",
+}
+
 return {
-  {
-    "stevearc/oil.nvim",
-    opts = {
-      view_options = {
-        show_hidden = true,
-        is_hidden_file = function(name)
-          return vim.startswith(name, ".")
-        end,
-        is_always_hidden = function(name)
-          local never_show = { ".git", "node_modules" }
-
-          for _, val in ipairs(never_show) do
-            if name == val then
-              return true
-            end
-
-            return false
-          end
-        end,
-      },
-    },
-    keys = {
-      {
-        "<leader>o",
-        function()
-          if vim.bo.filetype == "oil" then
-            require("oil").close()
-          else
-            require("oil").open()
-          end
-        end,
-      },
-    },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-  },
   {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
@@ -102,13 +138,6 @@ return {
         },
       },
     },
-    opts = {
-      defaults = {
-        file_ignore_patterns = {
-          "./packages/hub-template/*",
-        },
-      },
-    },
   },
   { "tpope/vim-fugitive" },
   {
@@ -167,20 +196,38 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    opts = {
-      formatters_by_ft = {
-        ["html"] = { "prettier" },
-      },
-    },
+    opts = function(_, opts)
+      opts.formatters_by_ft = (function()
+        local result = {}
+        for _, ft in ipairs(filetypes_with_dynamic_formatter) do
+          result[ft] = biome_or_prettier
+        end
+        return result
+      end)()
+
+      -- Add Biome formatter
+      -- opts.formatters = opts.formatters or {}
+      opts.formatters.biome = {
+        command = "biome",
+        args = { "check", "--write", "$FILENAME" }, --  ← this was the magic that fixed organizing imports
+        stdin = false,
+      }
+
+      return opts
+    end,
   },
   {
-    "mistricky/codesnap.nvim",
-    build = "make",
+    "stevearc/conform.nvim",
+    ---@class ConformOpts
     opts = {
-      border = "rounded",
-      has_breadcrumbs = true,
-      bg_theme = "summer",
-      watermark = "",
+      formatters_by_ft = {
+        javascript = biome_lsp_or_prettier,
+        typescript = biome_lsp_or_prettier,
+        javascriptreact = biome_lsp_or_prettier,
+        typescriptreact = biome_lsp_or_prettier,
+        json = { "biome" },
+        jsonc = { "biome" },
+      },
     },
   },
   {
@@ -203,21 +250,7 @@ return {
     },
   },
   {
-    "MeanderingProgrammer/render-markdown.nvim",
-    ft = { "markdown", "codecompanion" },
-  },
-  {
-    "OXY2DEV/markview.nvim",
-    lazy = false,
-    opts = {
-      preview = {
-        filetypes = { "markdown", "codecompanion" },
-        ignore_buftypes = {},
-      },
-    },
-  },
-  {
-    "echasnovski/mini.diff",
+    "nvim-mini/mini.diff",
     config = function()
       local diff = require("mini.diff")
       diff.setup({
